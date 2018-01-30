@@ -1,0 +1,97 @@
+---
+layout: post
+title:      "Oh My JSON "
+date:       2018-01-30 20:45:46 +0000
+permalink:  oh_my_json
+---
+
+That would characterize my JQuery front end project pretty well. If you're not familiar, JavaScript Object Notation, JSON is the hash-table-looking way of formatting data to make it easy and cheap to work with. Easy because its organized, cheap because it requires minimal labeling, so fewer bits, thus winning a sort of evolutionary race with XML. Working with JSON really isn't that bad, but there are a few things that I got hung up on that might help you if you're following the same process.
+
+First, there's the super maddeningly named [JSON API](http://jsonapi.org). Everything about this specification makes it tough to research. The most notable feature of which, at least to me, is the moving of resources to an includes section. Say you have an article and an author, you might expect it to look something like this: 
+```
+
+"article" {
+     "id": "1", 
+     "title": "JSON API paints my bikeshed!", 
+     "body": "The shortest article. Ever.", 
+     "created": "2015-05-22T14:56:29.000Z", 
+     "updated": "2015-05-22T14:56:28.000Z" }, 
+     "author": {
+          "id": "42", 
+          "name": "John", 
+          "age": 80, 
+          "gender": "male"
+          }
+ 	   }
+}
+```
+
+Which is what examples like [this one from MDN](http://https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON) look like. But no. With JSON API it would look more like this: 
+
+```
+{
+  "data": [{
+    "type": "articles",
+    "id": "1",
+    "attributes": {
+      "title": "JSON API paints my bikeshed!",
+      "body": "The shortest article. Ever.",
+      "created": "2015-05-22T14:56:29.000Z",
+      "updated": "2015-05-22T14:56:28.000Z"
+    },
+    "relationships": {
+      "author": {
+        "data": {"id": "42", "type": "people"}
+      }
+    }
+  }],
+  "included": [
+    {
+      "type": "people",
+      "id": "42",
+      "attributes": {
+        "name": "John",
+        "age": 80,
+        "gender": "male"
+      }
+    }
+  ]
+}
+```
+
+Not hard to understand, but why? Why would you do this to me? To get the author of the article I have to grab the id and type from the article's relationship section, then search through the includes section and compare it to the id AND type (different resources are all included in the includes section, so you could have a 'person' and a 'comment' with the same ID) in order to find the matching resource. Frustrating. 
+
+The why to this gets implied, but not explicitly stated all over the place: 
+
+> HAL embeds child documents recursively, while JSON API flattens the entire graph of objects at the top level. This means that if the same "people" are referenced from different kinds of objects (say, the author of both posts and comments), this format ensures that there is only a single representation of each person document in the payload.
+
+This is from the JSON API FAQ about using JSON API over HAL (not the first place you would look to understand something fundamental to the spec). In other words, *the includes section will only include a resource 1 time*, so it's saving as much space as possible by not repeating itself. This also allows easier caching of those resources. I have about a 1000 questions/argument about this and its implementation, but now's not the time. Suffice it to say, once I understood the why, I felt more comfortable not using it. If you want more reading, it's [here](https://jeremywsherman.com/blog/2016/07/23/why-im-meh-about-json-api/#discoverability).
+
+Active Model Serializer, Oh my JSON. This thing is super powerful, I wish there was more development on it. It's also not the easiest thing to decipher without some help. I used methods within the serializer to impose conditions on resources so only ones that meet those conditions get included in the JSON. For example, my app allows users to create a wishlist of gifts that they want. So, a user has many gifts, and a gift has many categories. I want to rank the frequency of a category on a user's wishlist, then for a given category I want to display users who have that category in their top 3 most used categories. Still with me? 
+
+Let's say Alice really likes beany babies. She has a bunch of them on her wishlist, and 1 tea kettle. I would want to know that Alice is more interested in the toys (or collector's items if you must) category than the kitchenwares category. And I would want to suggest that someone who is interested in toys check out Alice's wishlist, hence I display her wishlist under the Toys category. And I need that all returned in JSON. 
+
+In my application that looks like this: 
+```
+class CategorySerializer < ActiveModel::Serializer
+  attributes :id, :name
+  has_many :gifts
+
+  has_many :users do |serializer|
+    object.users.where(id: serializer.top_users).distinct
+  end
+
+  def top_users
+    object.users.collect do |user|
+      user.id if user.most_popular_categories.include?(object)
+    end.uniq
+  end
+end
+```
+
+And there are a bunch of other features that you can make use of, like setting the context for returning resources using current_user and creating custom attributes that aren't in your model or database but that send useful information to your views. 
+
+![](https://media.giphy.com/media/l1J9O9elEvuRjMyXu/giphy.gif)
+
+And thus continues my journey into programming--a rabbit hole full of rabbit holes. 
+
