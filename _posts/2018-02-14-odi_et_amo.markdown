@@ -1,10 +1,3 @@
----
-layout: post
-title:      "Odi Et Amo "
-date:       2018-02-14 11:00:46 +0000
-permalink:  odi_et_amo
----
-
 # Odi Et Amo
 
 As I finish up my React/Redux project the line "Odi et amo," I love and I hate, from a poem by Catullus does a pretty good job of summarizing my project (I think it does a pretty good job of summarizing a lot of things, which is probably why it is so well known). So, in the spirit of buzzfeed, here's a list of the top things I love and I hate from my React project:
