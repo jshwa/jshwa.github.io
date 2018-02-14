@@ -1,0 +1,29 @@
+# Odi Et Amo
+
+As I finish up my React/Redux project the line "Odi et amo," I love and I hate, from a poem by Catullus does a pretty good job of summarizing my project (I think it does a pretty good job of summarizing a lot of things, which is probably why it is so well known). So, in the spirit of buzzfeed, here's a list of the top things I love and I hate from my React project:
+
+#### 1. Dan Abramov
+
+The creator of Redux, React Hot Loader, Redux-Thunk, just a whole bunch of things, I’m pretty sure Dan Abramov is a machine that has already decided the path forward is not to try to become more human, but to get people to become more machine-like. I love and I hate his [tutorials on egghead.]([https://egghead.io/instructors/dan-abramov](https://egghead.io/instructors/dan-abramov)) I love them because they are super short – mostly 2 or 3 minutes each, they are super clear and they address the whole range of use-cases. I hate them because things seem to never be as easy as they are to Dan, and the guy appears to never make a typo. It’s like he’s not even trying to blend in.
+
+#### 2. React-router
+
+The ability to simply put in 
+
+```
+<Route path=”/path”> 
+```
+
+and have new url path is awesome and definitely messed with my head as I tried to convert my brain from thinking about a URL as a path to a resource, like an actual file, versus telling React what to display on the page. I love it because its super useful and not that hard to get the hang of (I breezed through the section on it in the curriculum). I hate it because there seem to be a few more gotchas than I’ve seen in other libraries, especially when used with Redux. For example, in order to pass props into a React component while also ensuring that Router will trigger a reload of the component you have to use the withRouter function to wrap connect. It took me a while to figure this out, [documentation is here.] (https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/guides/redux.md)
+
+#### 3. Github API
+
+It’s great how much data the Github API makes available. You can access just about anything, perform any action, all from some JSON. Given their audience, it makes sense, but still, it’s awesome. But of course, like any API there are hick-ups. Random little things that throw you off, like how randomly the parameters have to be passed as JSON instead of as part of the URL or in the headers. And it isn’t all Github: I love and I hate chaining promises. 
+
+```
+Fetch(url).then() 
+```
+
+seems so easy…but then you start dealing with Promise.all. Love it now, hated it then.
+
+This list could go for a while, but I’m going to cap it there because I love and I hate writing blog posts.
